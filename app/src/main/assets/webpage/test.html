@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>菜鸟教程(runoob.com)</title>
+</head>
+<script>
+    function tapBtnFun()
+    {
+
+     navigator.mediaDevices.getUserMedia({
+				video: true,
+				audio: true
+			}).then(function(stream) {
+                var video = document.getElementById('video_remote');
+				try {
+				   video.srcObject = stream;
+				} catch (error) {
+				   video.src = window.URL.createObjectURL(stream);
+				}
+			}).catch(function(e) {
+			    console.log("getUserMedia error = ",e);
+			});
+
+    }
+    window.tapBtn = tapBtnFun;
+</script>
+<body>
+
+<button type="button" onclick="tapBtn()">点我!</button>
+<video  id="video_remote" controls="controls"  x5-video-player-type="h5" x5-video-player-fullscreen="true" x5-playsinline playsinline
+       webkit-playsinline preload  autoplay
+></video>
+</body>
+
+</html>

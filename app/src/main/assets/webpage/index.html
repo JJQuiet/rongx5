@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>调度台
+		</title>
+
+		<!--http://www.html5rocks.com/en/mobile/mobifying/-->
+		<meta name="viewport"
+			content="width=device-width,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1,minimal-ui=true" />
+
+		<!--https://developer.apple.com/library/safari/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html-->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+		<meta name="format-detection" content="telephone=no">
+
+		<!-- force webkit on 360 -->
+		<meta name="renderer" content="webkit" />
+		<meta name="force-rendering" content="webkit" />
+		<!-- force edge on IE -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="msapplication-tap-highlight" content="no">
+
+		<!-- force full screen on some browser -->
+		<meta name="full-screen" content="yes" />
+		<meta name="x5-fullscreen" content="true" />
+		<meta name="360-fullscreen" content="true" />
+
+		<!--fix fireball/issues/3568 -->
+		<!--<meta name="browsermode" content="application">-->
+		<meta name="x5-page-mode" content="app">
+
+		<!--<link rel="apple-touch-icon" href=".png" />-->
+		<!--<link rel="apple-touch-icon-precomposed" href=".png" />-->
+
+		<link rel="stylesheet" type="text/css" href="style.css" />
+
+
+
+<!--		<script src="vconsole.min.js" type="text/javascript"> </script>-->
+		<script>
+
+			 //window.vConsole = new window.VConsole();
+			 var jsGetIpconfigByX5 = function() {
+			   var res = prompt("JavaScript prompt()");
+			   console.log("JavaScript get ipconfig res = "+res);
+			   return res;
+			}
+			var AndroidEventListenerFun = (state)=>{
+			    var _event = null;
+				if (state == 1 || state == "1")
+				  _event = new Event('appHandUpOperation', { "bubbles": false, "cancelable": false });
+				else
+				  _event = new Event('appHandDownOperation', { "bubbles": false, "cancelable": false });
+				document.dispatchEvent(_event);
+	        }
+			function fetchLocal(url) {
+				return new Promise(function(resolve, reject) {
+					console.log("url = " + url);
+					var xhr = new XMLHttpRequest
+					xhr.onload = function() {
+						resolve(new Response(xhr.response, {
+							status: xhr.status
+						}))
+					}
+					xhr.onerror = function() {
+						reject(new TypeError('Local request failed'))
+					}
+					xhr.open("GET", url)
+					xhr.responseType = "arraybuffer";
+					xhr.send(null)
+				})
+			};
+			window.fetch = fetchLocal;
+		</script>
+<!--		<script src="./permission.js"></script>-->
+<!--		<script src="./SIPml-apiRongpan.js"></script>-->
+<!--		<script src="./adapterRongpan.js"></script>-->
+		
+
+	</head>
+
+	<body>
+		<div id="GameDiv">
+			<div id="Cocos3dGameContainer">
+				<canvas id="GameCanvas" oncontextmenu="event.preventDefault()" tabindex="0"></canvas>
+			</div>
+		</div>
+		<div id="wrap" style="position:absolute;width:100%;height:100%;background-color:#3498DB">
+			<div id="loader-container" class="beCenter">
+				<p id="loadingText">Loading...</p>
+			</div>
+		</div>
+		<form action="" id="wavForm" method="post" style="display: none;">
+			<input id="wavInp" type="text" name="path" value="">
+		</form>
+
+		<!-- Polyfills bundle. -->
+		<script src="src/polyfills.bundle.js" charset="utf-8"> </script>
+
+		<!-- SystemJS support. -->
+		<script src="src/system.bundle.js" charset="utf-8"> </script>
+
+		<!-- Import map -->
+		<script src="src/import-map.json" type="systemjs-importmap" charset="utf-8"> </script>
+
+		<script>
+			System.import('./index.js').catch(function(err) {
+				console.error(err);
+			})
+		</script>
+
+		<audio id="audio_remote" autoplay="autoplay"> </audio>
+	</body>
+	<script>
+
+		var isX5Android = false;
+		var isUniAppAndroid = false;
+		var isX5linephone = true;
+		console.log("window.location.href = " + window.location.href);
+		console.log("navigator.userAgent = " + navigator.userAgent);
+
+		var serverIp = "192.168.0.7"; //http请求服务器
+		var socketPort = 8001; //websocket 消息推送端口
+		var httpPort = 8002; //http 主动请求端口
+
+		var monitorPreview = "http://192.16.6.37:1994/rec/"; //录音播放地址
+		var monitorDownload = "http://192.16.6.37:1994/file/download"; //录音下载地址
+		var monitorPath = "D://project//java//HTTPFTP-master//testDown//";
+
+		var queueName = "6850"; //呼入队列  暂时不用
+
+		var queueMember = "6007"; //呼入队列接听成员 暂时不用
+
+		var meetingReq = "http://192.168.0.7:8005";
+		var meetingSocket = "ws://192.168.0.7:8006/ws";
+
+		console.log("当前版本 = v2");
+		console.log("解决触摸");
+		if (document.documentElement.ontouchstart === undefined) document.documentElement.ontouchstart = null
+	</script>
+	<style>
+		.beCenter {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.flexcol {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.btneff {
+			transition: transform 0.3s;
+		}
+
+		.btneff:active {
+			transform: scale(0.8);
+		}
+
+		@-webkit-keyframes borderScale {
+			0% {
+				border: 5px solid white;
+			}
+
+			50% {
+				border: 25px solid #3498db;
+			}
+
+			100% {
+				border: 5px solid white;
+			}
+		}
+
+		::-webkit-scrollbar {
+			display: none;
+		}
+
+		@keyframes borderScale {
+			0% {
+				border: 5px solid white;
+			}
+
+			50% {
+				border: 25px solid #3498db;
+			}
+
+			100% {
+				border: 5px solid white;
+			}
+		}
+
+		#loader-container {
+			width: 200px;
+			height: 200px;
+			color: white;
+			margin: 0 auto;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin-right: -50%;
+			transform: translate(-50%, -50%);
+			border: 5px solid #3498db;
+			border-radius: 50%;
+			-webkit-animation: borderScale 1s infinite ease-in-out;
+			animation: borderScale 1s infinite ease-in-out;
+		}
+
+		#loadingText {
+			font-family: 'Raleway', sans-serif;
+			font-weight: bold;
+			font-size: 2em;
+
+		}
+
+		.beCenter {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+	</style>
+
+
+</html>

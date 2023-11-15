@@ -1,0 +1,41 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><title>dispatchvue</title><script src="vconsole.min.js"></script><script>var coverSupport = 'CSS' in window && typeof CSS.supports === 'function' && (CSS.supports('top: env(a)') || CSS.supports('top: constant(a)'))
+        document.write('<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' + (coverSupport ? ', viewport-fit=cover' : '') + '" />')</script><link rel="stylesheet" href="./static/index.97465e7b.css"/><script defer="defer" src="./static/js/chunk-vendors.c4e731f5.js"></script><script defer="defer" src="./static/js/index.293e5f8a.js"></script></head><body><noscript><strong>Please enable JavaScript to continue.</strong></noscript><div id="app"></div><audio style="position:fixed;top:0px;left:0px;" id="audio_remote" autoplay="autoplay"></audio><div id="videoGp" class="beCenter" style="position:fixed;pointer-events: none;opacity: 0;top:0px;left:0px;right:0px;bottom:0px;z-index: 99999;"><div style="width: 100%;position: relative;"><div style="background-color:#061729;padding-bottom:65%;border-radius:20px"></div><div class="flexcol" style="position: absolute;top:0px;right: 0px;left: 0px;bottom: 0px;padding: 20px;"><div style="position: relative;;width:100%;height:100%"><video width="100%" height="100%" id="video_remote" autoplay="autoplay" style="background-color: #343334; -webkit-transition-property: opacity; -webkit-transition-duration: 2s;"></video><video id="video_user" autoplay="autoplay" muted="true" style="opacity: 0;width: 10%;height: 10%;position:absolute;top: 0px;left:0px;background-color: #343334; -webkit-transition-property: opacity;-webkit-transition-duration: 2s;"></video><video id="video_other" autoplay="autoplay" muted="true" style="opacity: 0;width: 10%;height: 10%;position:absolute;bottom: 0px;right:0px;background-color: #343334; -webkit-transition-property: opacity;-webkit-transition-duration: 2s;"></video><video id="video_local" autoplay="autoplay" muted="true" style="width: 10%;height: 10%;position:absolute;bottom: 0px;left:0px;background-color: #343334; -webkit-transition-property: opacity;-webkit-transition-duration: 2s;"></video></div></div><div style="position: absolute;right:0px;top:0px;"><img id="closeVideo" class="btneff" src="./Close.png"/></div><div style="position: absolute;left:0px;top:0px;"><img id="videoDel" class="btneff" src="./icondel.png"/></div></div></div></body><script>
+        window.vConsole = new window.VConsole();
+    var isX5AndroidApp = false;
+    var isLiphoneApp = true;
+    var reqUrl = "http://localhost:8002";
+    var fsReqUrl = "http://localhost:8005";
+    var fsSocket = "ws://localhost:8006/ws";
+
+    var jsGetIpconfigByX5 = function() {
+        var res = prompt("JavaScript prompt()");
+        console.log("JavaScript get ipconfig res = "+res);
+        return res;
+    }
+    var AndroidEventListenerFun = (state)=>{
+        var _event = null;
+        if (state == 1 || state == "1")
+            _event = new Event('appHandUpOperation', { "bubbles": false, "cancelable": false });
+        else
+            _event = new Event('appHandDownOperation', { "bubbles": false, "cancelable": false });
+        document.dispatchEvent(_event);
+    }</script><style>.beCenter {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .flexcol {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .btneff {
+        transition: transform 0.3s;
+    }
+
+    .btneff:active {
+        transform: scale(0.8);
+    }</style></html>

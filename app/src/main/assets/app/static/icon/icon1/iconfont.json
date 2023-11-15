@@ -1,0 +1,44 @@
+{
+  "id": "4212671",
+  "name": "no name",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "7568875",
+      "name": "24gf-phoneEnd",
+      "font_class": "24gf-phoneEnd",
+      "unicode": "e968",
+      "unicode_decimal": 59752
+    },
+    {
+      "icon_id": "533731",
+      "name": "拨打",
+      "font_class": "boda",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
+      "icon_id": "11459693",
+      "name": "会议赞助研讨",
+      "font_class": "huiyizanzhuyantao",
+      "unicode": "e640",
+      "unicode_decimal": 58944
+    },
+    {
+      "icon_id": "577363",
+      "name": "首页-fill",
+      "font_class": "shouyefill",
+      "unicode": "e750",
+      "unicode_decimal": 59216
+    },
+    {
+      "icon_id": "15704353",
+      "name": "视频会议",
+      "font_class": "shipinhuiyi",
+      "unicode": "e638",
+      "unicode_decimal": 58936
+    }
+  ]
+}
