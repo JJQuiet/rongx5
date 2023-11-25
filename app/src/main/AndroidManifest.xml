@@ -33,9 +33,9 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!--悬浮窗-->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-<!--    android:screenOrientation="sensorLandscape"-->
+<!-- 小调度台   android:screenOrientation="sensorLandscape"-->
 <!--    android:screenOrientation="portrait"-->
-<!--    android:screenOrientation="nosensor"-->
+<!--  单兵  android:screenOrientation="nosensor"-->
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -47,9 +47,11 @@
         android:theme="@style/Theme.Rongx5"
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true"
-        android:screenOrientation="sensorLandscape"
+        android:screenOrientation="portrait"
+
         tools:targetApi="31">
         <activity
+            android:screenOrientation="portrait"
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"
             android:hardwareAccelerated="true"
@@ -65,8 +67,6 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW_LOCUS" />
@@ -90,8 +90,6 @@
                 <data android:mimeType="video/*" />
                 <data android:mimeType="application/*" />
             </intent-filter>
-
-
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -137,7 +135,6 @@
             android:label="dexopt"
             android:process=":dexopt" >
         </service>
-        <service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote" />
         <receiver android:name="com.example.rongx5.util.TelpoReceiver"
             android:exported="true">
             <intent-filter android:priority="10000">

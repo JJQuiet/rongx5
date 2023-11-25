@@ -51,6 +51,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.Policy;
 import java.util.HashMap;
+
 import android.hardware.Camera;
 
 import org.linphone.core.tools.service.CoreService;
@@ -65,10 +66,12 @@ public class MainActivity extends AppCompatActivity {
     private WindowManager windowManager;
     private View fullScreenLayer;
 
-    private   WebView mWebView;
+    private WebView mWebView;
 
-//    private static  String mHomeUrl = "file:///android_asset/webpage/index.html";
-    private static  String mHomeUrl = "file:///android_asset/app/index.html";
+    //    private static  String mHomeUrl = "file:///android_asset/webpage/index.html";
+    private static String mHomeUrl = "file:///android_asset/abc/index.html";
+//    private static  String mHomeUrl = " http://192.168.0.106:8080/";
+//    private static  String mHomeUrl = "http://91.cn:5500";
 //    private static  String mHomeUrl = "http://192.168.0.7:8080";
 //    private static  String mHomeUrl = "https://yongling8808.github.io/test/video_demo/video.html";
 
@@ -107,14 +110,14 @@ public class MainActivity extends AppCompatActivity {
 
         VideoPopup.creatrView();
     }
-    public void handevent(int state){
-        if(this.mWebView != null)
-        {
-            this.mWebView.loadUrl("javascript:AndroidEventListenerFun("+state+")");
+
+    public void handevent(int state) {
+        if (this.mWebView != null) {
+            this.mWebView.loadUrl("javascript:AndroidEventListenerFun(" + state + ")");
         }
     }
 
-    private void initwebview(){
+    private void initwebview() {
         WebView mWebView = (com.tencent.smtt.sdk.WebView) findViewById(R.id.forum_context);
         this.mWebView = mWebView;
         this.initwebviewSetting(mWebView);
@@ -123,13 +126,13 @@ public class MainActivity extends AppCompatActivity {
         this.initWebChromeClientExten(mWebView);
         this.initJavaScriptInterface();
         boolean isX5 = mWebView.getIsX5Core();
-        if(!isX5)
-        {
+        if (!isX5) {
             mWebView.loadUrl("http://debugtbs.qq.com");
             return;
         }
         mWebView.loadUrl(mHomeUrl);
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -146,7 +149,8 @@ public class MainActivity extends AppCompatActivity {
             fullScreen(fullScreenLayer);
         }
     }
-    private void initwebviewSetting( WebView mWebView){
+
+    private void initwebviewSetting(WebView mWebView) {
         WebSettings webSetting = mWebView.getSettings();
         mWebView.getSettings().setJavaScriptEnabled(true);// 支持js
         mWebView.getSettings().setUseWideViewPort(true); //自适应屏幕
@@ -165,18 +169,21 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-    private void initTbsSetting(){
+
+    private void initTbsSetting() {
         HashMap map = new HashMap();
         map.put(TbsCoreSettings.TBS_SETTINGS_USE_SPEEDY_CLASSLOADER, true);
         map.put(TbsCoreSettings.TBS_SETTINGS_USE_DEXLOADER_SERVICE, true);
         QbSdk.initTbsSettings(map);
     }
-    private void initTbsEnvir(){
+
+    private void initTbsEnvir() {
         QbSdk.initX5Environment(this, new QbSdk.PreInitCallback() {
             @Override
             public void onCoreInitFinished() {
                 // 内核初始化完成，可能为系统内核，也可能为系统内核
             }
+
             /**
              * 预初始化结束
              * 由于X5内核体积较大，需要依赖网络动态下发，所以当内核不存在的时候，默认会回调false，此时将会使用系统内核代替
@@ -188,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     private void initWebViewClient(WebView mWebView) {
         mWebView.setWebViewClient(new WebViewClient() {
             /**
@@ -233,6 +241,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     private void initWebChromeClient(WebView mWebView) {
         final Context context = this;
         final Activity activity = this;
@@ -284,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onJsPrompt(WebView webView, String url, String message, String defaultValue, JsPromptResult result) {
                 String ipconfigStr = GlobalConfig.ipconfig;
-                String laststr = ipconfigStr.replaceAll("\r\n",",");
+                String laststr = ipconfigStr.replaceAll("\r\n", ",");
                 result.confirm(laststr);
                 return true;
             }
@@ -311,12 +320,14 @@ public class MainActivity extends AppCompatActivity {
 //                    mGeolocationCallback = geolocationPermissionsCallback;
 //                }
             }
+
             @Override
             public void onPermissionRequest(PermissionRequest permissionRequest) {
                 //super.onPermissionRequest(permissionRequest);
                 permissionRequest.grant(permissionRequest.getResources());
-                Log.e(TAG,"onPermissionRequest");
+                Log.e(TAG, "onPermissionRequest");
             }
+
             @Override
             public void onShowCustomView(View view, IX5WebChromeClient.CustomViewCallback customViewCallback) {
                 // view 为内核生成的全屏视图，需要添加到相应的布局位置（如：全屏幕）
@@ -333,14 +344,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    private void initWebChromeClientExten(WebView mWebView){
-        mWebView.setWebChromeClientExtension(new ProxyWebChromeClientExtension(){
+
+    private void initWebChromeClientExten(WebView mWebView) {
+        mWebView.setWebChromeClientExtension(new ProxyWebChromeClientExtension() {
             @Override
             public boolean onPermissionRequest(String s, long l, MediaAccessPermissionsCallback mediaAccessPermissionsCallback) {
                 long allowed = 0;
                 allowed = allowed | MediaAccessPermissionsCallback.ALLOW_AUDIO_CAPTURE;
                 boolean retain = true;
-                mediaAccessPermissionsCallback.invoke(s, allowed,retain);
+                mediaAccessPermissionsCallback.invoke(s, allowed, retain);
                 return true;
             }
         });
@@ -351,24 +363,27 @@ public class MainActivity extends AppCompatActivity {
 //        super.onBackPressed();
         System.exit(0);
     }
-    private void initIpConfig(){
+
+    private void initIpConfig() {
         String ipConfig = StorageConfig.read();
-        if(StrUtil.isEmpty(ipConfig) == false)
-        {
+        if (StrUtil.isEmpty(ipConfig) == false) {
             GlobalConfig.ipconfig = ipConfig;
             AppConfig.init();
         }
     }
+
     private void initJavaScriptInterface() {
         final Activity context = this;
         mWebView.addJavascriptInterface(new WebViewJavaScriptFunction() {
             @Override
             public void onJsFunctionCalled(String tag) {
             }
+
             @JavascriptInterface
             public void warkScreen() {
                 ScreenUnit.wark(MainActivity.instance);
             }
+
             @JavascriptInterface
             public void x5linphoneSendMsg(String json) {
                 NativeUnit.receive(json);
@@ -390,7 +405,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public WebView getWebView(){
+    public WebView getWebView() {
         return this.mWebView;
     }
 }

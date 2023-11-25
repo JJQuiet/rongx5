@@ -1,9 +1,9 @@
 @font-face {
   font-family: "custom-icon"; /* Project id 4212671 */
-  src: url('@/static/font/iconfont.woff2?t=1692250155155') format('woff2'),
-       url('@/static/font/iconfont.woff?t=1692250155155') format('woff'),
-       url('@/static/font/iconfont.ttf?t=1692250155155') format('truetype'),
-       url('@/static/font/iconfont.svg?t=1692250155155#custom-icon') format('svg');
+  src: url('@/static/font/iconfont.woff2?t=1698629193135') format('woff2'),
+       url('@/static/font/iconfont.woff?t=1698629193135') format('woff'),
+       url('@/static/font/iconfont.ttf?t=1698629193135') format('truetype'),
+       url('@/static/font/iconfont.svg?t=1698629193135#custom-icon') format('svg');
 }
 
 .custom-icon {
@@ -12,6 +12,14 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.custom-icon-baojing:before {
+  content: "\e687";
+}
+
+.custom-icon-xitongyunwei:before {
+  content: "\e614";
 }
 
 .custom-icon-phoneend:before {

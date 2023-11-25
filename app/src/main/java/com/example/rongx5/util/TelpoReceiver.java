@@ -1,4 +1,5 @@
 package com.example.rongx5.util;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,19 +19,19 @@ public class TelpoReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         mContext = context;
-        handleIntent(intent,context);
+        handleIntent(intent, context);
     }
 
 
-    private void handleIntent(Intent intent,Context context){
+    private void handleIntent(Intent intent, Context context) {
         String action = intent.getAction();
-        Log.i(this.TAG,action);
-        if(action.equals(ACTION_HANDLE_PLUG) ){
+        Log.i(this.TAG, action);
+        if (action.equals(ACTION_HANDLE_PLUG)) {
             int state_plug = intent.getIntExtra("state", 0);
-            handleHandlePlug(state_plug,context);
+            handleHandlePlug(state_plug, context);
             return;
         }
-        if(action.equals(ACTION_HANDSFREE_KEY)){
+        if (action.equals(ACTION_HANDSFREE_KEY)) {
             int state_hf = intent.getIntExtra("action", 0);
             handleHandsfree(state_hf);
             return;
@@ -40,9 +41,8 @@ public class TelpoReceiver extends BroadcastReceiver {
     }
 
 
-    private void handleHandlePlug(int state,Context context){
-        if(state == 1)
-        {
+    private void handleHandlePlug(int state, Context context) {
+        if (state == 1) {
             Log.i(TAG, "手柄拿起");
 //            Js.call("HandUpOperation");
             return;
@@ -52,8 +52,8 @@ public class TelpoReceiver extends BroadcastReceiver {
         return;
     }
 
-    private void handleHandsfree(int state){
-        Log.i(TAG, "hansfree key state = "+state);
+    private void handleHandsfree(int state) {
+        Log.i(TAG, "hansfree key state = " + state);
 //        Js.call("HandsFreeOperation");
 //        //点亮屏幕
 //        Native.wark();

@@ -16,6 +16,7 @@ import android.util.Log;
 
 import com.example.rongx5.MainActivity;
 import com.example.rongx5.R;
+import com.example.rongx5.util.GlobalConfig;
 import com.example.rongx5.util.ScreenUnit;
 import com.example.rongx5.util.js.AppConfig;
 import com.example.rongx5.util.js.JSunit;
@@ -40,25 +41,10 @@ public class VideoCall {
     private CoreListenerStub coreListener = new CoreListenerStub() {
         @Override
         public void onAccountRegistrationStateChanged(Core core, Account account, RegistrationState state, String message) {
-//            findViewById<TextView>(R.id.registration_status).text = message
-//
             if (state == RegistrationState.Failed) {
-                Toast.makeText(MainActivity.instance, "登录失败："+message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.instance, "登录失败：" + message, Toast.LENGTH_SHORT).show();
             } else if (state == RegistrationState.Ok) {
                 Log.i(TAG, "注册成功》》》》哈哈哈");
-//                hangUp();
-//                double screenWid = (double) AndroidUnit.getScreenWidth(MainActivity.instance);
-//                double screenHei = (double) AndroidUnit.getScreenHight(MainActivity.instance);
-//
-//                ViewGroup.MarginLayoutParams remoteViewParams = (ViewGroup.MarginLayoutParams)remoteView.getLayoutParams();
-//                remoteViewParams.width = (int)screenWid;
-//                remoteViewParams.height = (int)screenHei;
-//                remoteView.setLayoutParams(remoteViewParams);
-//
-//                remoteView.setMinimumWidth((int)screenWid);
-//                remoteView.setMinimumHeight((int)screenHei);
-////                remoteView.setAspectRatio((int)screenWid,(int)screenHei);
-//                remoteView.rotateToMatchDisplayOrientation(1);
             }
         }
 
@@ -90,10 +76,12 @@ public class VideoCall {
 
                 ScreenUnit.wark(MainActivity.instance);
                 //是头盔，注释下一行
-                JSunit.IncomingReceived(isVideo ? "1" : "0",fromAddress);
+                if (GlobalConfig.isHelmet == false)
+                    JSunit.IncomingReceived(isVideo ? "1" : "0", fromAddress);
 
                 //如果是头盔,解开下面一行注释
-                //answer();
+                if (GlobalConfig.isHelmet)
+                    answer();
                 return;
             }
             if (state.equals(Call.State.OutgoingInit)) {
@@ -119,36 +107,20 @@ public class VideoCall {
                     isVideo = true;
                 }
                 String remoteAddr = call.getRemoteAddress().getDisplayName();
-                Log.i(TAG, "StreamsRunning "+remoteAddr);
+                Log.i(TAG, "StreamsRunning " + remoteAddr);
                 JSunit.StreamsRunning();
-                if(isVideo)
-                {
+                if (isVideo) {
                     videoDisplay();
                 }
-                if(remoteAddr!=null && remoteAddr.equals("conference"))
-                {
+                if (remoteAddr != null && remoteAddr.equals("conference")) {
                     //什么都不做
-                }
-                else
-                {
-                    if(isVideo)
-                    {
+                } else {
+                    if (isVideo) {
                         videoDisplay();
                         videoGp.setVisibility(View.VISIBLE);
                     }
                 }
 
-                // This state indicates the call is active.
-//                    // You may reach this state multiple times, for example after a pause/resume
-//                    // or after the ICE negotiation completes
-//                    // Wait for the call to be connected before allowing a call update
-//                    findViewById<Button>(R.id.pause).isEnabled = true
-//                    findViewById<Button>(R.id.pause).text = "Pause"
-//                    findViewById<Button>(R.id.toggle_video).isEnabled = true
-//
-//                    // Only enable toggle camera button if there is more than 1 camera and the video is enabled
-//                    // We check if core.videoDevicesList.size > 2 because of the fake camera with static image created by our SDK (see below)
-//                    findViewById<Button>(R.id.toggle_camera).isEnabled = core.videoDevicesList.size > 2 && call.currentParams.videoEnabled()
                 return;
             }
             if (state.equals(Call.State.Paused)) {
@@ -178,14 +150,7 @@ public class VideoCall {
                 JSunit.Released();
                 videoHide();
                 videoGp.setVisibility(View.GONE);
-                // Call state will be released shortly after the End state
-//                    findViewById<EditText>(R.id.remote_address).isEnabled = true
-//                    findViewById<Button>(R.id.call).isEnabled = true
-//                    findViewById<Button>(R.id.pause).isEnabled = false
-//                    findViewById<Button>(R.id.pause).text = "Pause"
-//                    findViewById<Button>(R.id.toggle_video).isEnabled = false
-//                    findViewById<Button>(R.id.hang_up).isEnabled = false
-//                    findViewById<Button>(R.id.toggle_camera).isEnabled = false
+
                 return;
             }
             if (state.equals(Call.State.Error)) {
@@ -194,37 +159,37 @@ public class VideoCall {
 
         }
     };
-    public void outFullScreen(){
+
+    public void outFullScreen() {
         this.videoGp.setVisibility(View.GONE);
     }
-    public void showFullScreen(){
+
+    public void showFullScreen() {
         this.videoGp.setVisibility(View.VISIBLE);
     }
-    public VideoCall onCreateInit(TextureView remoteVideo, TextureView localVideo,View videoGp) {
+
+    public VideoCall onCreateInit(TextureView remoteVideo, TextureView localVideo, View videoGp) {
         VideoCall._ins = this;
         this.videoGp = videoGp;
-        this.remoteView =remoteVideo;
+        this.remoteView = remoteVideo;
         this.localView = localVideo;
         this.videoGp.setVisibility(View.GONE);
 
 
-
         Factory factory = Factory.instance();
-        factory.setDebugMode(true, "HelloLinphone");
+        factory.setDebugMode(GlobalConfig.isDebug, "HelloLinphone");
         core = factory.createCore(null, null, MainActivity.instance);
         PayloadType[] audioArr = core.getAudioPayloadTypes();
         PayloadType[] videoArr = core.getVideoPayloadTypes();
         for (PayloadType payloadType : audioArr) {
-            if(payloadType.getMimeType().equals("PCMA"))
-            {
+            if (payloadType.getMimeType().equals("PCMA")) {
                 payloadType.enable(true);
                 continue;
             }
             payloadType.enable(false);
         }
         for (PayloadType payloadType : videoArr) {
-            if(payloadType.getMimeType().equals("H264"))
-            {
+            if (payloadType.getMimeType().equals("H264")) {
                 payloadType.enable(true);
                 continue;
             }
@@ -254,41 +219,10 @@ public class VideoCall {
 //        // Here we have configured the policy to always automatically accept video requests
         core.getVideoActivationPolicy().setAutomaticallyAccept(true);
 
-
-//        // If you don't want to automatically accept,
-//        // you'll have to use a code similar to the one in toggleVideo to answer a received request
-//
-//        // If the following property is enabled, it will automatically configure created call params with video enabled
-//        //core.videoActivationPolicy.automaticallyInitiate = true
-//
-//        callbtn.setOnClickListener((View view) -> {
-//            outgoingCall();
-//        });
-
         login();
 
         return this;
-//
-//        findViewById<Button>(R.id.hang_up).setOnClickListener {
-//            hangUp()
-//        }
-//
-//        findViewById<Button>(R.id.pause).setOnClickListener {
-//            pauseOrResume()
-//        }
-//
-//        findViewById<Button>(R.id.toggle_video).setOnClickListener {
-//            toggleVideo()
-//        }
-//
-//        findViewById<Button>(R.id.toggle_camera).setOnClickListener {
-//            toggleCamera()
-//        }
-//
-//        findViewById<Button>(R.id.pause).isEnabled = false
-//        findViewById<Button>(R.id.toggle_video).isEnabled = false
-//        findViewById<Button>(R.id.toggle_camera).isEnabled = false
-//        findViewById<Button>(R.id.hang_up).isEnabled = false
+
     }
 
     private void login() {
@@ -386,14 +320,13 @@ public class VideoCall {
         }
     }
 
-    public void setMute(boolean isMute){
+    public void setMute(boolean isMute) {
         if (core.getCallsNb() == 0) return;
         Call currentCall = core.getCurrentCall();
-        if(currentCall == null)
-        {
+        if (currentCall == null) {
             return;
         }
-       currentCall.setMicrophoneMuted(isMute);
+        currentCall.setMicrophoneMuted(isMute);
 
 
     }
@@ -428,26 +361,47 @@ public class VideoCall {
 //                call.terminate()
     }
 
-    private void videoHide(){
+    private void videoHide() {
         this.localView.setVisibility(View.GONE);
         this.remoteView.setVisibility(View.GONE);
     }
 
-    private void videoDisplay(){
+    private void videoDisplay() {
         this.localView.setVisibility(View.VISIBLE);
         this.remoteView.setVisibility(View.VISIBLE);
     }
 
-
-    private void initCamera() {
+    public void toggleCamera() {
+        if (core.getCallsNb() == 0) return;
+        Call call = null;
+        if (core.getCurrentCall() != null) {
+            call = core.getCurrentCall();
+        } else {
+            call = core.getCalls()[0];
+        }
+        if (call == null) return;
+        // Currently used camera
         String currentDevice = core.getVideoDevice();
-        //小调度台
+        // Let's iterate over all camera available and choose another one
+        // All devices will have a "Static picture" fake camera, and we don't want to use it
         for (String camera : core.getVideoDevicesList()) {
-            // All devices will have a "Static picture" fake camera, and we don't want to use it
-            if (camera != currentDevice && camera != "BackFacingCamera0") {
+            if (!camera.equals(currentDevice) && !camera.equals("StaticImage: Static picture")) {
                 core.setVideoDevice(camera);
+                break;
             }
         }
+    }
+
+
+    private void initCamera() {
+//        String currentDevice = core.getVideoDevice();
+//        //小调度台
+//        for (String camera : core.getVideoDevicesList()) {
+//            // All devices will have a "Static picture" fake camera, and we don't want to use it
+//            if (camera != currentDevice && camera != "BackFacingCamera0") {
+//                core.setVideoDevice(camera);
+//            }
+//        }
         //景德镇天波的
 //        if(currentDevice.equals("FrontFacingCamera1") == false)
 //        {
@@ -474,7 +428,7 @@ public class VideoCall {
 //                    break;
 //                }
 //            }
-            // Let's iterate over all camera available and choose another one
+        // Let's iterate over all camera available and choose another one
 //            for (camera in core.getVideoDevicesList()) {
 //                // All devices will have a "Static picture" fake camera, and we don't want to use it
 //                if (camera != currentDevice && camera != "StaticImage: Static picture") {
@@ -486,8 +440,6 @@ public class VideoCall {
 
 
     }
-
-
 
 
     private void toggleVideo() {
@@ -514,29 +466,6 @@ public class VideoCall {
 //
 //        // Note that when toggling off the video, TextureViews will keep showing the latest frame displayed
     }
-
-    public void toggleCamera() {
-        if (core.getCallsNb() == 0) return;
-        Call call = null;
-        if (core.getCurrentCall() != null) {
-            call = core.getCurrentCall();
-        } else
-        {
-            call = core.getCalls()[0];
-        }
-        if(call == null)return;
-        // Currently used camera
-        String  currentDevice = core.getVideoDevice();
-        // Let's iterate over all camera available and choose another one
-            // All devices will have a "Static picture" fake camera, and we don't want to use it
-        for (String camera : core.getVideoDevicesList()) {
-            if (!camera.equals(currentDevice) && !camera.equals("StaticImage: Static picture")) {
-                core.setVideoDevice(camera);
-                break;
-            }
-        }
-    }
-
 
 
 //    private void pauseOrResume() {

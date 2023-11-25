@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "8441716",
+      "name": "报警",
+      "font_class": "baojing",
+      "unicode": "e687",
+      "unicode_decimal": 59015
+    },
+    {
+      "icon_id": "12694063",
+      "name": "系统运维",
+      "font_class": "xitongyunwei",
+      "unicode": "e614",
+      "unicode_decimal": 58900
+    },
+    {
       "icon_id": "7568875",
       "name": "24gf-phoneEnd",
       "font_class": "phoneend",

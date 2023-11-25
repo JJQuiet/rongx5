@@ -17,20 +17,19 @@ import com.example.rongx5.MainActivity;
 
 
 public class JKeyBoard {
-    class KBReceiver extends BroadcastReceiver
-    {
+    class KBReceiver extends BroadcastReceiver {
         @Override
-        public void onReceive(Context context, Intent intent)
-        {
-            receive( context, intent );
+        public void onReceive(Context context, Intent intent) {
+            receive(context, intent);
         }
     }
+
     // 1. 按键键值
-    private static final int KEYCODE_PTT           = 284;
-    private static final int KEYCODE_HS_PTT        = 285;
-    private static final int KEYCODE_SOS           = 286;
-    private static final int KEYCODE_VID_RECORD    = 287;
-    private static final int KEYCODE_AUD_RECORD    = 288;
+    private static final int KEYCODE_PTT = 284;
+    private static final int KEYCODE_HS_PTT = 285;
+    private static final int KEYCODE_SOS = 286;
+    private static final int KEYCODE_VID_RECORD = 287;
+    private static final int KEYCODE_AUD_RECORD = 288;
 
     private IntentFilter mKBIntentFilter = null;
     private KBReceiver mKBReceiver = null;
@@ -69,9 +68,12 @@ public class JKeyBoard {
 	}
 	*/
 
-    private JKeyBoard() { }
+    private JKeyBoard() {
+    }
 
-    static public JKeyBoard instance() { return mInstance; }
+    static public JKeyBoard instance() {
+        return mInstance;
+    }
 
     public void setContext(Context context) {
         Log.d(TAG, "context: " + context.toString());
@@ -91,29 +93,25 @@ public class JKeyBoard {
         start();
     }
 
-    public void start( ){
-        mContext.registerReceiver( mKBReceiver, mKBIntentFilter );
+    public void start() {
+        mContext.registerReceiver(mKBReceiver, mKBIntentFilter);
         //System.out.printf("+++++++++++++++__________+++++++++++++++++11111...start....\n");
     }
 
-    public void stop( ){
-        mContext.unregisterReceiver( mKBReceiver );
+    public void stop() {
+        mContext.unregisterReceiver(mKBReceiver);
     }
 
-    private void receive(Context context, Intent intent)
-    {
+    private void receive(Context context, Intent intent) {
         String action = intent.getAction();
         //System.out.printf("+++++++++++++++__________+++++++++++++++++22222...%s\n",action);
-        if (action.equals(ACTION_HANDLE_PLUG))
-        {
+        if (action.equals(ACTION_HANDLE_PLUG)) {
             if (intent.hasExtra("state") && MainActivity.instance != null) {
-                int i_state = intent.getIntExtra("state", 0) ;//0挂机，1摘机
-                if(i_state == 1)
-                {
+                int i_state = intent.getIntExtra("state", 0);//0挂机，1摘机
+                if (i_state == 1) {
                     MainActivity.instance.handevent(i_state);
 //                    Js.call("HandUpOperation");
-                }
-                else if(i_state == 0) {
+                } else if (i_state == 0) {
                     MainActivity.instance.handevent(i_state);
 //                    Js.call("HandDownOperation")
                 }

@@ -1,35 +1,37 @@
 @font-face {
-  font-family: "iconfont"; /* Project id 4212671 */
-  src: url('iconfont.woff2?t=1692172476766') format('woff2'),
-       url('iconfont.woff?t=1692172476766') format('woff'),
-       url('iconfont.ttf?t=1692172476766') format('truetype');
+  font-family: "custom-icon"; /* Project id 4212671 */
+  src: url('@/static/font/iconfont.woff2?t=1692172476766') format('woff2'),
+       url('@/static/font/iconfont.woff?t=1692172476766') format('woff'),
+       url('@/static/font/iconfont.ttf?t=1692172476766') format('truetype'),
+       url('@/static/font/iconfont.svg?t=1692250155155#custom-icon') format('svg');
+
 }
 
-.iconfont {
-  font-family: "iconfont" !important;
+.custom-icon {
+  font-family: "custom-icon" !important;
   font-size: 16px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-24gf-phoneEnd:before {
+.custom-icon-phoneEnd:before {
   content: "\e968";
 }
 
-.icon-boda:before {
+.custom-icon-boda:before {
   content: "\e607";
 }
 
-.icon-huiyizanzhuyantao:before {
+.custom-icon-huiyizanzhuyantao:before {
   content: "\e640";
 }
 
-.icon-shouyefill:before {
+.custom-icon-shouyefill:before {
   content: "\e750";
 }
 
-.icon-shipinhuiyi:before {
+.custom-icon-shipinhuiyi:before {
   content: "\e638";
 }
 

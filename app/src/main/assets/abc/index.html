@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>WebRecord</title>
+</head>
+<body>
+<!--Mr. Ma's Blog www.misterma.com-->
+<button type="button" id="start-camera-btn">打开摄像头</button>
+<button type="button" id="start-btn">开始录像</button>
+<button type="button" id="stop-btn">停止录像</button>
+<button type="button" id="play-btn">播放视频</button>
+<button type="button" id="export-btn">导出视频</button>
+<video id="video-player" width="720" height="360" controls></video>
+<div id="video-list"></div>
+
+</body>
+<script>
+    const startCameraBtn = document.querySelector("#start-camera-btn"); // 打开摄像头按钮
+    const startBtn = document.querySelector("#start-btn"); // 开始录像按钮
+    const stopBtn = document.querySelector("#stop-btn"); // 停止录像按钮
+    const playBtn = document.querySelector("#play-btn"); // 播放视频按钮
+    const exportBtn = document.querySelector("#export-btn"); // 导出视频按钮
+    const videoEl = document.getElementById('video-player'); // 视频播放元素
+    let videoData = []; // 存放视频数据
+    let cameraStream = null; // 存放媒体流
+    let mediaRecorder = null; // 存放媒体录制对象
+
+    startCameraBtn.disabled = false;
+    startBtn.disabled = true;
+    stopBtn.disabled = true;
+    playBtn.disabled = true;
+    exportBtn.disabled = true;
+    // 打开摄像头按钮点击
+    startCameraBtn.addEventListener("click", () => {
+        // 申请视频和音频的参数
+        const constraints = {
+            audio: true,
+            video: {
+                width: 720,
+                height: 360,
+            },
+        };
+        if (navigator.mediaDevices.getUserMedia === undefined) {
+            navigator.mediaDevices.getUserMedia = function (constraints) {
+
+                // 首先，如果有getUserMedia的话，就取得它
+                var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+                // 一些浏览器基本没实现它 - 那么就返回一个error到promise的reject来放弃一个对立的接口
+                if (!getUserMedia) {
+                    return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
+                }
+
+                // 否则，为老的navigator.getUserMedia办法包裹一个Promise
+                return new Promise(function (resolve, reject) {
+                    getUserMedia.call(navigator, constraints, resolve, reject);
+                });
+            }
+        }
+        // 申请摄像头和麦克风权限
+        navigator.mediaDevices
+            .getUserMedia(constraints)
+            .then((stream) => {
+                cameraStream = stream;
+                // 禁用 video 的控制组件
+                videoEl.controls = false;
+                // 把媒体流传给 video 的 srcObject
+                videoEl.srcObject = cameraStream;
+                // 播放画面和声音
+                videoEl.play();
+                startCameraBtn.disabled = true;
+                startBtn.disabled = false;
+            })
+            .catch((info) => {
+                alert("错误" + info);
+            });
+    });
+    // 开始录像按钮点击
+    startBtn.addEventListener("click", () => {
+        // 清空视频数据
+        videoData = [];
+        // 创建媒体录制
+        mediaRecorder = new MediaRecorder(cameraStream, {
+            mimeType: "video/webm",
+        });
+        // 开始录制
+        mediaRecorder.start();
+        // 处理视频数据
+        mediaRecorder.addEventListener("dataavailable", (ev) => {
+            videoData.push(ev.data);
+        });
+        // 录制开始事件
+        mediaRecorder.addEventListener("start", () => {
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+        });
+        // 录制停止事件
+        mediaRecorder.addEventListener("stop", () => {
+            videoData = new Blob(videoData);
+            stopBtn.disabled = true;
+            startBtn.disabled = false;
+            playBtn.disabled = false;
+            exportBtn.disabled = false;
+        });
+    });
+    // 停止录像按钮点击并关闭摄像头
+    stopBtn.addEventListener("click", () => {
+        mediaRecorder.stop();
+        cameraStream.getTracks().forEach((track) => track.stop());
+    });
+    // 播放视频点击
+    playBtn.addEventListener("click", () => {
+        if (videoData === null) return false;
+        // 清除 video 的媒体流
+        videoEl.srcObject = null;
+        // 把视频数据转为 URL 传给 video 的 src
+        videoEl.src = URL.createObjectURL(videoData);
+        // 播放视频
+        videoEl.play();
+        // 启用 video 的控制组件
+        videoEl.controls = true;
+        // 删除媒体流
+        cameraStream = null;
+        playBtn.disabled = true;
+        startCameraBtn.disabled = false;
+        startBtn.disabled = true;
+    });
+    // 导出视频按钮点击
+    exportBtn.addEventListener("click", () => {
+        if (videoData === null) return false;
+        //如何把视频 Blob 数据添加到 FormData 上传到服务器
+        var myHeaders = new Headers();
+        myHeaders.append("Accept", "*/*");
+        // 创建 FormData 实例
+        const formData = new FormData();
+        // 将视频 Blob 数据添加到 FormData,视频的名称带上时间戳
+        // 获取当前时间并格式化为字符串
+        const now = new Date();
+        const timestamp = now.toISOString().replace(/:/g, "-").split(".")[0]; // ISO格式，替换冒号，移除毫秒
+        formData.append("video", videoData, `video_${timestamp}.webm`);
+        // 发送请求到服务器
+        fetch("http://192.168.0.100:8443/upload-video", {
+            method: "POST",
+            headers: myHeaders,
+            body: formData,
+        })
+            .then((response) => response.text())
+            .then((data) => {
+                console.log("上传成功:", data);
+            })
+            .catch((error) => {
+                console.error("上传错误:", error);
+            });
+        fetch("http://192.168.0.100:8443/test", {
+            method: "GET",
+        })
+            .then((response) => response.text())
+            .then((data) => {
+                console.log("成功:", data);
+            })
+    });
+
+    // 获取并显示视频列表
+    function loadVideoList() {
+        fetch('http://192.168.0.100:8443/videos')
+            .then(response => response.json())
+            .then(data => {
+                const listContainer = document.getElementById('video-list');
+                listContainer.innerHTML = '';
+                data.forEach(video => {
+                    const listItem = document.createElement('div');
+                    listItem.textContent = video;
+                    listItem.addEventListener('click', () => loadAndPlayVideo(video));
+                    listContainer.appendChild(listItem);
+                });
+            })
+            .catch(error => console.error('加载视频列表失败:', error));
+    }
+
+    // 加载并播放视频
+    function loadAndPlayVideo(videoName) {
+        videoEl.src = `http://192.168.0.100:8443/video/${videoName}`;
+        videoEl.play();
+    }
+
+    // 页面加载时获取视频列表
+    window.onload = loadVideoList;
+</script>
+</html>
+<style>
+    #video-list > div {
+        cursor: pointer;
+    }
+
+    #video-list > div:hover {
+        background-color: #eee;
+    }
+</style>

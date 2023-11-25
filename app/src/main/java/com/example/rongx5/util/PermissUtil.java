@@ -37,6 +37,7 @@ public class PermissUtil {
         }
         return true;
     }
+
     public static boolean verifyPermissions(Activity activity) {
         // Check if we have write permission
 //        int permission = ActivityCompat.checkSelfPermission(activity,

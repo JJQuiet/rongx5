@@ -19,74 +19,59 @@ import android.widget.RelativeLayout;
 
 import com.example.rongx5.MainActivity;
 import com.example.rongx5.R;
+import com.example.rongx5.util.GlobalConfig;
 
 public class VideoPopup {
-//    private static org.linphone.mediastream.video.capture.CaptureTextureView remoteView;
-//    private static org.linphone.mediastream.video.capture.CaptureTextureView localView;
-    private static View remoteGp;
     private static boolean _isInit = false;
-    //我这里写在TTAdManagerHolder， 然后在AppActivity的oncreate中调用的
-    public static void creatrView(){
-        //原生的view直接添加到cocos的view内
-        //R代表你是哪个包名的R文件，然后把创建好的view嵌入在你的cocosview里，不要使用setContentView(R.layout.activity_native_express);创建view
+
+    public static void creatrView() {
+        if (GlobalConfig.notLinphone)
+            return;
         View layout = LayoutInflater.from(MainActivity.instance).inflate(R.layout.video_popup, null);
         FrameLayout mFrameLayout = new FrameLayout(MainActivity.instance);
         mFrameLayout.addView(layout);
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         lp.bottomMargin = 0;
-        MainActivity.instance.addContentView(mFrameLayout,lp);
-        View mExpressContainer = (View)MainActivity.instance.findViewById(R.id.videoGp);
-
-//        View bottomContainer = (View)MainActivity.instance.findViewById(R.id.localVideoGp);
-//        ViewGroup.MarginLayoutParams bottomparams = (ViewGroup.MarginLayoutParams)bottomContainer.getLayoutParams();
-//        bottomparams = AndroidUnit.setCocosNodeSize(bottomparams,426,277,0,0);
-//        bottomContainer.setLayoutParams(bottomparams);
-
+        MainActivity.instance.addContentView(mFrameLayout, lp);
+        View mExpressContainer = (View) MainActivity.instance.findViewById(R.id.videoGp);
 
         ImageButton outFull = MainActivity.instance.findViewById(R.id.imageButton);
-        outFull.setOnClickListener((View view)->{
-            //如果是小调度台，下面注释掉4行
-//            Configuration mConfiguration = MainActivity.instance.getResources().getConfiguration();
-//            if (mConfiguration.orientation == mConfiguration.ORIENTATION_LANDSCAPE) {
-//                MainActivity.instance.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//            }
+        outFull.setOnClickListener((View view) -> {
+            if (GlobalConfig.isDanbin) {
+                Configuration mConfiguration = MainActivity.instance.getResources().getConfiguration();
+                if (mConfiguration.orientation == mConfiguration.ORIENTATION_LANDSCAPE) {
+                    MainActivity.instance.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                }
+            }
             VideoCall._ins.outFullScreen();
         });
 
         ImageButton cameraB = MainActivity.instance.findViewById(R.id.cameraBtn);
-        cameraB.setOnClickListener((View view)->{
+        cameraB.setOnClickListener((View view) -> {
             VideoCall._ins.toggleCamera();
         });
 
 
-        View remoteVideo = (View)MainActivity.instance.findViewById(R.id.remoteVideo);
-        View localVideo = (View)MainActivity.instance.findViewById(R.id.selfVideo);
+        View remoteVideo = (View) MainActivity.instance.findViewById(R.id.remoteVideo);
+        View localVideo = (View) MainActivity.instance.findViewById(R.id.selfVideo);
 
 
-        VideoCall videoCall = new VideoCall().onCreateInit((TextureView) remoteVideo,(TextureView) localVideo,mExpressContainer);
-
-
-//        VideoPopup.localView = (org.linphone.mediastream.video.capture.CaptureTextureView) localVideo;
-//        VideoPopup.remoteView = (org.linphone.mediastream.video.capture.CaptureTextureView) remoteVideo;
-
-        VideoPopup.remoteGp = (View)MainActivity.instance.findViewById(R.id.remoteGp);
+        VideoCall videoCall = new VideoCall().onCreateInit((TextureView) remoteVideo, (TextureView) localVideo, mExpressContainer);
 
         ImageButton rotationBtn = MainActivity.instance.findViewById(R.id.rotationBtn);
-        rotationBtn.setOnClickListener((View view)->{
+        rotationBtn.setOnClickListener((View view) -> {
             Configuration mConfiguration = MainActivity.instance.getResources().getConfiguration();
             if (mConfiguration.orientation == mConfiguration.ORIENTATION_LANDSCAPE) {
                 MainActivity.instance.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            }
-            else
-            {
+            } else {
                 MainActivity.instance.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             }
 
         });
-        //        rotationBtn.setVisibility();
-        //如果是小调度台，打开下面2行
-        rotationBtn.setVisibility(View.GONE);
-        cameraB.setVisibility(View.GONE);
+        if (GlobalConfig.isDispatch) {
+            rotationBtn.setVisibility(View.GONE);
+            cameraB.setVisibility(View.GONE);
+        }
 //        _isInit  = true;
 //        Configuration mConfiguration = MainActivity.instance.getResources().getConfiguration();
 //        dispatchConfigChange(mConfiguration);
@@ -98,8 +83,9 @@ public class VideoPopup {
 //        AppActivity._ins.getGLSurfaceView().getHolder().setFormat(PixelFormat.TRANSLUCENT);
 //        mExpressContainer.setVisibility(View.GONE);
     }
-    public static void dispatchConfigChange(Configuration newConfig){
-        if(!_isInit)return;
+
+    public static void dispatchConfigChange(Configuration newConfig) {
+        if (!_isInit) return;
         if (newConfig.orientation == newConfig.ORIENTATION_LANDSCAPE) {
 //            VideoPopup.remoteGp.setRotation(90);
 
@@ -116,9 +102,7 @@ public class VideoPopup {
 ////            VideoPopup.remoteView.setScaleY((int)screenHei/(int)screenWid);
 //            VideoPopup.remoteView.setScaleX(1/2);
 //            setupMatrix((int)screenWid,(int)screenHei,90,true);
-        }
-        else
-        {
+        } else {
 //            VideoPopup.remoteGp.setRotation(0);
 
 //            double screenWid = (double) AndroidUnit.getScreenWidth(MainActivity.instance);

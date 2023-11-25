@@ -1,0 +1,13 @@
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">91.cn</domain>
+    </domain-config>
+
+    <debug-overrides>
+        <trust-anchors>
+            <!-- Trust pre-installed CAs and user-added CAs while debuggable only -->
+            <certificates src="user" overridePins="true" />
+            <certificates src="system" overridePins="true" />
+        </trust-anchors>
+    </debug-overrides>
+</network-security-config>

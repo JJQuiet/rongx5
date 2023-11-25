@@ -43,10 +43,11 @@ public class BootReceiver extends BroadcastReceiver {
 //        //杀掉以前进程
 //        android.os.Process.killProcess(android.os.Process.myPid());
 //    }
+
     /**
      * 判断应用是否已经启动
      *
-     * @param context   上下文对象
+     * @param context     上下文对象
      * @param packageName 要判断应用的包名
      * @return boolean
      */
